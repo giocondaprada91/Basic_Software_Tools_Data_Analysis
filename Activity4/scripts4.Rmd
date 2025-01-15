@@ -1,0 +1,162 @@
+---
+title: "Activity 8 - Gioconda Prada"
+output: word_document
+date: "..."
+---
+
+The main goal of the activity is to make sure package `regclass` is installed so that you are set up for the rest of the course.  This package contains the commands written specifically for association and regression analysis and contains many datasets.    
+
+Once `regclass` is installed, load it up and make it available by running
+
+```{r load up regclass, message=FALSE}
+library(regclass)
+#If not installed, run the line below. (Of course, remove # sign) 
+#install.package("regclass")
+```
+
+**************
+
+
+**Question 1:**
+After the `regclass` library has been loaded, load in the `SURVEY11` dataset from package `regclass` by running
+
+```{r read SURVEY11}
+data(SURVEY11)
+```
+
+This contains information about students from 2011.  Let us study a potential association between someone's relationship status `X34.RelationshipStatus` (the $y$ variable) and someone's gender `X02.Gender`.  If an association existed, this would imply that men and women view definitions of relationship statuses somewhat differently.  
+
+Use `associate`, adding the argument `seed=298` so that the set of 500 (default value) permutation datasets generated are the same for everyone.
+
+
+```{r}
+#Your associate command using a seed of 298
+associate(X34.RelationshipStatus~X02.Gender,data=SURVEY11,permutations=500, seed = 298)
+```
+
+- Does the mosaic plot suggest that an association exists?  Why or why not?
+
+*Response:* Yes, there are noticeable differences in patterns.
+
+**************
+
+- Let's estimate $p$-value via theoretical approach for the "discrepancy"" between the conditional distributions of relationship status between genders?  
+
+```{r}
+ta<- 1-pchisq(9.138875,df=1*3)
+print(ta)
+
+```
+
+*Response:*0.02750033
+
+**************
+
+- Let's estimate $p$-value via permutation approach for the "discrepancy"" between the conditional distributions of relationship status between genders?  Why is the test inconclusive?
+
+*Response:*it is inconclusive because the p-value is between 0.02 and 0.054 meaning it is slightly higher than 0.05 
+
+**************
+
+- Add the argument `permutations=1500` to make 1500 permutation datasets instead of the default 500 (have the seed still be 298) with seed number equals to 298.  The test will now be conclusive.  Is the association statistically significant?
+
+```{r}
+#Your associate command using 1500 permutations and a seed of 298
+associate(X34.RelationshipStatus~X02.Gender,data=SURVEY11,permutations=1500, seed = 298)
+```
+
+*Comment:*there exists a significant association, test result is conclusive 
+
+
+**************
+
+**Activity 9**
+
+**Question 1**:
+Load up `SURVEY10` using `data(SURVEY10)`.  Making student profiles is valuable from a marketing perspective so that advertisments can be targeted to the right set of people.  To make a profile, associations must be analyzed.  
+
+a.  Run `cor_matrix` on the first 7 columns of the data frame to obtain a correlation matrix (there are so many variables doing `cor_matrix` on the entirety of the data frame results in too many values to look at).
+
+```{r}
+data(SURVEY10)
+cor_matrix(SURVEY10[,1:7])
+
+
+```
+
+b.  Now run `all_correlations` on the entirety of the dataframe to get the pairwise correlations between every quantitative variable.  Add the argument `sorted="strength"` to have this list sorted by strength (from most negative to most positive).  What pair of quantities has the strongest positive, strongest negative, and strongest overall relationship?
+
+```{r}
+#all_correlations(SURVEY10,sorted="strength")
+head(all_correlations(SURVEY10,sorted="magnitude"))
+```
+
+*Response*:the strongest positive= Weight and DesiredWeight 
+strongest negative= DesiredWeight and NumBodyPiercings
+strongest overall relationship= Weight and DesiredWeight 
+
+c.  Which quantity has the strongest correlation with `GPA`.  Run `all_correlations` adding the argument `interest="GPA"` to find out. 
+
+
+```{r}
+all_correlations(SURVEY10,interest='GPA',sorted="magnitude")[1,]
+```
+
+*Response*:Weight 
+
+d.  The analysis you have done so far has assumed that Pearson's correlation coefficient provides a suitable measure of the strength of the relationship.   This may not be the case.  
+
+- Rerun the `all_correlations` command from part b, but add the argument `type="spearman"` so that Spearmans' rank correlations are considered.  You can ignore the `There were 50 or more warnings...` message.  
+
+```{r}
+#all_correlations with argument type="spearman"
+head(all_correlations(SURVEY10,type="spearman",sorted="strength"))
+#all_correlations(SURVEY10,type="spearman",sorted="magnitude")
+```
+
+- What pair of variables have the strong negative association?  
+
+*Response*:DesiredWeight and NumBodyPiercings
+
+- Make a scatterplot of their relationship (same sort of syntax as what you use for `associate`:  `plot(y~x,data=DATA)` and determine if you should be using Pearson or Spearman to gauge the strength.  
+
+```{r}
+plot(NumBodyPiercings~DesiredWeight, data=SURVEY10)
+
+```
+
+*Response*:Spearman
+
+- The association is highly statistically significant, but there is obviously not a cause-effect physical law underlying the relationship.  Why do you think we see such a strong relationship (i.e., what might be a lurking variable)?
+
+*Response*: Age
+
+
+**************
+
+**Question 3**:
+Load `EX2.CENSUS` using `data(EX2.CENSUS)`.
+
+```{r}
+data(EX2.CENSUS)
+```
+
+b. Is the association between `ResponseRate` and `HomeownerHH` statistically significant?
+
+```{r}
+associate(ResponseRate~HomeownerHH, data=EX2.CENSUS)
+```
+
+*Response:*yes
+
+c. Describe the direction and form of the relationship between `logMedianHouseValue` and `MedianHHIncomeCity` (the x-variable).  Does it have unusual features?  Which measure should be used to gauge the strength?
+
+```{r}
+associate(logMedianHouseValue~MedianHHIncomeCity, data=EX2.CENSUS)
+```
+
+*Response:*Positive direction, form is non-linear, it has some heteroscedasticity, spearman
+
+
+
+**************
