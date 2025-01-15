@@ -1,0 +1,138 @@
+---
+title: "Activity 2/3 - Gioconda Prada"
+output: word_document
+---
+
+Note:  in this document, you will see that math is written funny.  The symbols (like dollar signs and backslashes) are the way to get math looking nice in this sort of document.  You will not need to be writing any equations, so you don't need to learn it.  Often it can be hard reading what the equation says though, so I recommend Knitting the document to HTML or to Word to see the equation more clearly.
+
+**************
+**************
+**************
+
+Directions:  make sure this file is in your STA 9750 or OPR 9750 folder (along with the data file you are asked to download in Question 3).  Often when you download things they will go to your Downloads folder so make sure you have moved it.  R will give an error if it tries to read in a file that is not in the same folder as the .Rmd file you are working from.  
+
+Put your code on separate lines between the back quotes.  *Do not delete the backquotes*.  This is how R knows which lines to run while making the HTML/Word document.
+
+If a question has *Comment:*, this is a place for you to respond to the question being asked.  On activities and homework, if you see *Comment:* or *Response:*, be sure to answer (if a question lacks such a spot, no response is required).
+
+**************
+**************
+**************
+
+**Activity 2**
+
+**Question 2:**  Use the `seq` command to help answer the following questions:
+
+a.  What's the 111st element of a sequence that starts at 1.2 and increments by .3?  (e.g., 1.2, 1.5, 1.8, ...)
+
+b.  Consider a sequence that starts at 5 and ends at 8 and which has 321 elements.  How many elements are greater than 6.3?
+
+```{r Q2}
+#a 
+x <- seq(from=1.2,by=0.3,length=111)
+x[111]
+
+#b
+x <- seq(from=5,to=8,length=321)
+subset(x, x>6.3)
+
+```
+
+
+*********************
+
+4.  Consider various columns of  `ALUMNI`.  Write all code to answer the following questions in the single R chunk that's after the list of questions.
+
+  b.  What *percentage* (a number between 0-1) of alumni have NOT donated.  Two ways of approaching this:  one with `length` and `which` and the other with `mean` (we recommend doing both!).  One way is to count how many the entries in the `LTG2UT` column equal 0 and divide by the number of rows of the data.  
+  
+  *Response:*
+
+  c.  "Print to the screen" the values of `GENDER_CODE` in rows 201, 320, 474, 479, and 533.   Remember the phrase "print to the screen" just means ensuring the command does not have a left-arrow so that the results get output to the console and are "knitted" into the document.
+
+  f.  Which row (1-43994) contains the largest value of `LTG2UT`?
+  
+  *Response:*
+  
+  g.  How many rows have values `LTG2UT` that are greater than 500,000 dollars AND values of `AREA_CODE` that is 865?
+ 
+  *Response:*
+
+  j.  Print to the screen the possible values (i.e., levels vector) of `DEGREE1_CAMPUS`
+
+  *Response:*
+
+```{r Q4 each part should have one line of code}
+load("Activity2.RData")
+
+#b
+x<-length(which(ALUMNI$LTG2UT==0))
+x/nrow(ALUMNI)
+
+#c
+rows<- c(201, 320, 474, 479, 533)
+print(ALUMNI$GENDER_CODE[rows])
+
+#f
+max(ALUMNI$LTG2UT)
+
+#g
+sum(ALUMNI$LTG2UT>500000 & ALUMNI$AREA_CODE==865, na.rm = TRUE)
+#j
+print (levels(ALUMNI$DEGREE1_CAMPUS))
+```
+
+
+
+*********************
+
+
+5.  Rename the `GENDER_CODE` column to be `GENDER`, rename its levels to be "Female", "Male", and "Unknown", and print to the screen a frequency table of this recoded `GENDER` column.
+
+```{r Q5}
+ALUMNI$GENDER <- ALUMNI$GENDER_CODE
+levels(ALUMNI$GENDER) <- c("Female", "Male", "Unknown")
+table(ALUMNI$GENDER)
+
+```
+
+
+
+**Activity 3**
+
+
+**Question 1:**  Download Act3-CustomerTrans.dat and put it in your STA 9750 or OPR 9750 folder.  This is the entirety of some customer's credit card transaction data.  Each record has the amount of the transaction, the merchant involved (coded by, M326, for example, UNKNOWN when not available), the type of merchant (industry and super industry), the merchant's and customer's zip codes when available (along with the distance between these zips), whether the purchase was made on the internet, and the date of the purchase (measured in \# of days since the beginning of data collection).
+
+a.  Import the file and name the dataframe `CUST`.  Try this using `read.csv`.    Determine the number of rows and columns in the dataset by running `nrow()`, `ncol()`, or `dim()` (using `CUST` as the argument to these functions), then show the first four lines of the data using `head` (see RBasic slides).  
+
+
+```{r Q1a}
+CUST <- read.csv("Act3-CustomerTrans.dat")
+nrow(CUST)
+ncol(CUST)
+dim(CUST)
+head(CUST,4)
+```
+
+**************
+
+b.  Show row 27 of the data on the screen.  What is the amount spent for this transaction?   
+
+```{r Q2b}
+CUST [27,]
+```
+
+*Comment:* 
+
+**************
+
+d.  Using either `summary` or `table`, find how many times this person purchased something on the internet, column `Internet`. 
+
+```{r Q2d}
+internet_table<- table(CUST$Internet)
+print(internet_table)
+
+```
+
+*Comment:* 
+
+**************
